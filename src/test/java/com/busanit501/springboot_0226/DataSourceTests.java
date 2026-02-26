@@ -25,6 +25,6 @@ public class DataSourceTests {
         Connection con = dataSource.getConnection();
         log.info("연결테스트 확인 : " +con);
         Assertions.assertNotNull(con);
+        // con이 null이 아니면 테스트 통과!
     }
-
 }
