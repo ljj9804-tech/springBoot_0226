@@ -1,6 +1,8 @@
 package com.busanit501.springboot_0226.controller;
 
+
 import com.busanit501.springboot_0226.dto.BoardDTO;
+import com.busanit501.springboot_0226.dto.BoardListReplyCountDTO;
 import com.busanit501.springboot_0226.dto.PageRequestDTO;
 import com.busanit501.springboot_0226.dto.PageResponseDTO;
 import com.busanit501.springboot_0226.service.BoardService;
@@ -25,7 +27,10 @@ public class BoardController {
 
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model) {
-        PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO);
+//        PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO);
+
+        // 기존 목록에, 댓글 갯수 포함된 , 서비스 메서드로 교체 작업.
+        PageResponseDTO<BoardListReplyCountDTO> responseDTO = boardService.listWithReplyCount(pageRequestDTO);
         log.info("BoardController에서, responseDTO 확인 ," + responseDTO);
         model.addAttribute("responseDTO", responseDTO);
     }
@@ -56,7 +61,7 @@ public class BoardController {
     }
 
     @GetMapping({"/read","/modify"})
-    public void read(Long bno, PageRequestDTO pageRequestDTO, Model model) {
+    public  void read(Long bno, PageRequestDTO pageRequestDTO, Model model) {
         BoardDTO boardDTO = boardService.readOne(bno);
         log.info("BoardController 에서, read , boardDTO 확인 : " +boardDTO );
         model.addAttribute("dto",boardDTO);
@@ -64,11 +69,11 @@ public class BoardController {
 
     @PostMapping("/modify")
     public String modify(@Valid BoardDTO boardDTO, BindingResult bindingResult,
-                         PageRequestDTO pageRequestDTO,
-                         RedirectAttributes redirectAttributes) {
+                               PageRequestDTO pageRequestDTO,
+                               RedirectAttributes redirectAttributes) {
         log.info("BoardController 에서, modify 작업중");
 
-// 서버에서 유효성 체크를 했을 경우
+        // 서버에서 유효성 체크를 했을 경우
         if(bindingResult.hasErrors()) {
             log.info("BoardController 에서, modify , 유효성 오류 발생. ");
             String link = pageRequestDTO.getLink();
@@ -76,24 +81,22 @@ public class BoardController {
             redirectAttributes.addAttribute("bno",boardDTO.getBno());
             return "redirect:/board/modify?"+link;
         }
-// 유효성 체크를 통과한 경우.
+        // 유효성 체크를 통과한 경우.
         log.info("boardDTO 확인 : " + boardDTO);
         boardService.modify(boardDTO);
         redirectAttributes.addFlashAttribute("result", "modified");
         redirectAttributes.addAttribute("bno", boardDTO.getBno());
         return "redirect:/board/read";
+
     }
 
     @PostMapping("/remove")
-    public String remove(Long bno, RedirectAttributes redirectAttributes) {
+    public String remove(Long bno,  RedirectAttributes redirectAttributes) {
         log.info("BoardController 에서, remove 작업중");
 
         boardService.remove(bno);
         redirectAttributes.addAttribute("result","removed");
         return "redirect:/board/list";
     }
-
-
-
 
 }

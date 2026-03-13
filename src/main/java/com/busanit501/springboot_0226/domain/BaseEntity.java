@@ -21,6 +21,8 @@ abstract class BaseEntity { // 설계 클래스 목적으로 사용 할 예정
     private LocalDateTime regDate;
 
     // 수정 시간 필드
+    // 주의, 수정할 때, 자동으로 시간이 기록이 되는게 목적인데, 옵션에서 수정을 못하게 막으면, 모순. !!!
+    // updatable = false , 제외 했음.
     @LastModifiedDate
     @Column(name = "modDate")
     private LocalDateTime modDate;

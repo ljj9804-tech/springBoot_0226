@@ -15,7 +15,7 @@ import java.util.Map;
 public class SampleController {
 
     // 내부 클래스로 수업용으로 만듦.
-    public class SampleDTO {
+   public class SampleDTO {
         private String p1,p2,p3;
 
         public String getP1() {
@@ -35,6 +35,7 @@ public class SampleController {
         List<String> strList = Arrays.asList("111", "BBB", "CCC");
         model.addAttribute("strList", strList);
     }
+
 
     @GetMapping("/ex/ex2")
     public void ex2(Model model) {
