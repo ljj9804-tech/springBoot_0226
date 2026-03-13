@@ -1,6 +1,7 @@
 package com.busanit501.springboot_0226.controller;
 
 import com.busanit501.springboot_0226.dto.BoardDTO;
+import com.busanit501.springboot_0226.dto.BoardListReplyCountDTO;
 import com.busanit501.springboot_0226.dto.PageRequestDTO;
 import com.busanit501.springboot_0226.dto.PageResponseDTO;
 import com.busanit501.springboot_0226.service.BoardService;
@@ -25,7 +26,7 @@ public class BoardController {
 
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model) {
-        PageResponseDTO<BoardDTO> responseDTO = boardService.list(pageRequestDTO);
+        PageResponseDTO<BoardListReplyCountDTO> responseDTO = boardService.listWithReplyCount(pageRequestDTO);
         log.info("BoardController에서, responseDTO 확인 ," + responseDTO);
         model.addAttribute("responseDTO", responseDTO);
     }
@@ -92,6 +93,8 @@ public class BoardController {
         redirectAttributes.addAttribute("result","removed");
         return "redirect:/board/list";
     }
+
+
 
 
 }
