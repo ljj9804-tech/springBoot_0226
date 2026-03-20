@@ -2,6 +2,10 @@ package com.busanit501.springboot_0226.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 //추가 기능 : 애너테이션 옵션 추가.
@@ -9,7 +13,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+// 추가작업 ,
+@ToString(exclude = "imageSet" )// Board 객체를 문자열로 출력시, 첨부된 이미지들은 출력을 안함.
 public class Board extends BaseEntity {
 
     // 엔티티 클래스는 실제 데이터 베이스의 테이블을 만드는 효과이므로, 반드시 pk 를 생성해야함.
@@ -35,5 +40,45 @@ public class Board extends BaseEntity {
     public void change(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    //추가작업
+    // 연관관계 설정 2번,
+    // 게시글 1 <----> N 첨부 이미지, 양쪽에서 연관 관계 설정 모두 했음. 양방향.
+//    @OneToMany
+    // BoardImage 의 board 변수를 의미 , 해석 : 나는 연관관계 주인이 아니예요. BoardImage가 연관관계의 주인입니다.
+    @OneToMany(mappedBy = "board",
+            cascade = CascadeType.ALL, // 영속정 정의, all, 추가, 수정, 분리, 삭제, 하위에도 영향을 주겠다.
+            fetch = FetchType.LAZY, // 현재 테이블 Board 테이블을 조회를 하는데, imageSet BoardImage 필요시, 조회할 때만
+            orphanRemoval = true
+    )
+    @Builder.Default
+    @BatchSize(size = 20)
+    private Set<BoardImage> imageSet = new HashSet<>();
+
+    // 이미지 추가하는 메서드
+    public void addImage(String uuid, String fileName) {
+
+        // BoardImage 객체를 빌더 패턴으로 생성.
+        BoardImage boardImage = BoardImage.builder()
+                .uuid(uuid)
+                .fileName(fileName)
+                .board(this)
+                .ord(imageSet.size())
+                // 첨부 이미지를 3개를 첨부했으면,
+                // 처음 객체를 생성시, imageSet.size() 0개.
+                // 2번째 객체를 생성시, imageSet.size() 1개.
+                // 3번째 객체를 생성시, imageSet.size() 2개.
+                .build();
+        imageSet.add(boardImage);
+    }
+
+    // 이미지 삭제하는 메서드
+    public void clearImages() {
+        imageSet.forEach(boardImage ->
+                // 부모 게시글을 null 변환 시키면, 고아 객체가 되어서, 자동으로 삭제되는 효과를 줄 예정.
+                // 참고로, 추가 옵션 설정이 필요함.
+                boardImage.changeBoard(null));
+        this.imageSet.clear();
     }
 }

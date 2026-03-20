@@ -1,6 +1,9 @@
 package com.busanit501.springboot_0226.repository;
 
 import com.busanit501.springboot_0226.domain.Board;
+import com.busanit501.springboot_0226.domain.BoardImage;
+import com.busanit501.springboot_0226.domain.Reply;
+import com.busanit501.springboot_0226.dto.BoardListAllDTO;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Commit;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 @SpringBootTest
@@ -20,6 +26,10 @@ public class BoardRepositoryTests {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    // 게시글 삭제시, 댓글 삭제 기능도 필요해서, 도움을 요청.
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @Test
     public void testInsert() {
@@ -109,4 +119,144 @@ public class BoardRepositoryTests {
 
     }
 
+    // 영속성 테스트 작업1 , 아직 고아 객체 제거 설정이 없어서,
+    // 삭제 확인은 안되지만, 참고 테스트 파일 생성.
+    @Test
+    public void testInsertWithImage() {
+
+        Board board = Board.builder()
+                .title("샘플 게시글....")
+                .content("샘플 내용....")
+                .writer("샘플 작성자...")
+                .build();
+
+        // 첨부 이미지 3개를 작성해서, Board 객체안에, 담기
+        for(int i = 0; i < 3 ; i++) {
+            board.addImage(UUID.randomUUID().toString(), "file" + i + ".png");
+
+        }
+        boardRepository.save(board);
+
+    }
+
+    // @EntityGraph 이용한 호출 , 즉 N+1 문제 해결책.
+    // 조인해서, 두 테이블을 붙여서, 한번만 호출할 예정.
+    // 이 과정을 보여주기.
+    @Test
+    @Transactional
+    //import org.springframework.transaction.annotation.Transactional;
+    public void testReadWithImage() {
+        // 샘플테이블에서, 게시글 번호를 조회.
+        // 만들어둔 메서드 사용.
+        Optional<Board> result = boardRepository.findByIdWithImages(3L);
+        Board board = result.orElseThrow();
+        log.info("board 조회 해보기 : " + board);
+        log.info("====================================== ");
+        // 에러가 발생함. no session
+
+        // 첨부 이미지를 확인
+        for( BoardImage boardImage: board.getImageSet()) {
+            log.info("게시글에 첨부된 이미지 조회 : " + boardImage);
+        }
+    }
+
+
+    // 수정해보기.
+    // 해당 메서드안에 여러개의 작업을 하나의 단위로 만들어서, 모두 수행이 되면 진행시키고, 하나라도 진행이 안되면, 진행안해줘
+    // 예시) 돈 이체(메서드기능), 행위1:(송금자 계자 -), 행위2:(받는자.계좌 +)
+    // 예시) (행위1, 행위2) : 하나의 단위로 묶기, 트랜잭션 무조건 행위1, 행위2가 다같이 실행이 되어야함.
+    // 만약, 2개중에 하나라도 안되면, 무조건 롤백.
+    @Transactional
+    @Commit
+    @Test
+    //import org.springframework.transaction.annotation.Transactional;
+    public void testModifyImage() {
+        // 기존 게시글에는, 첨부 이미지 샘플 3개있음.
+        Optional<Board> result = boardRepository.findByIdWithImages(3L);
+        Board board = result.orElseThrow();
+
+        // 기존의 첨부파일들은 삭제
+        board.clearImages();
+
+        // 새로운 첨부 파일들 추가
+        for(int i = 0; i < 3 ; i++) {
+            board.addImage(UUID.randomUUID().toString(), "수정44_file_" + i + ".png");
+        }
+
+        // 테스트 실행을 하면, 고아 객체 형태로 남아 있는 거 먼저 확인. 후, 고아 객체 제거하는 설정하기.
+        boardRepository.save(board);
+    }
+
+    @Transactional
+    @Commit
+    @Test
+    //import org.springframework.transaction.annotation.Transactional;
+    public void testRemoveAll() {
+        Long bno = 3L;
+        replyRepository.deleteByBoard_Bno(bno);
+        // 그리고 나서, 게시글 지우기.
+        boardRepository.deleteById(bno);
+    }
+
+    // 약 100 개정도의 게시글과, 댓글, 첨부 이미지 까지만, 더미데이터 추가 해보기.
+    @Transactional
+    @Commit
+    @Test
+    public void testInsertAll() {
+        for (int i = 1; i <= 100; i++) {
+            Board board = Board.builder()
+                    .title("샘플 데이터 " + i)
+                    .content("샘플 제목 " + i)
+                    .writer("김꼬질" + i)
+                    .build();
+
+            for (int j = 0; j < 3; j++) {
+                if (i % 5 == 0) {
+                    // 5번째 씩 , 첨부 이미지 추가 안하기.
+                    continue;
+                }
+                // 첨부 이미지 3장씩 더미데이터
+                String uuid = UUID.randomUUID().toString();
+                String fileName = "샘플 이미지";
+                board.addImage(uuid, fileName + j + ".png");
+
+
+            }
+            // 게시글 작성 후 ,
+            boardRepository.save(board);
+            // 댓글 달기.
+            for (int j = 0; j < 3; j++) {
+                Reply reply = Reply.builder()
+                        .board(board)
+                        .replyText("샘플 댓글" + j)
+                        .replyer("이진주")
+                        .build();
+                replyRepository.save(reply);
+            }
+        }
+    }
+
+    // N + 1 , test 문제 상황 보기.
+    @Transactional
+    @Test
+    public void testSearchImageReplyCount() {
+        Pageable pageable = PageRequest.of(0,10,Sort.by("bno").descending());
+        boardRepository.searchWithAll(null,null,pageable);
+
+    }
+
+    @Transactional
+    @Test
+// 1)댓글 갯수 와 2)첨부 이미지 목록 존재 여부
+    public void testSearchWithAll2() {
+        Pageable pageable = PageRequest.of(0,10,
+                Sort.by("bno").descending());
+        Page<BoardListAllDTO> result =  boardRepository.searchWithAll(null,null,pageable);
+        log.info("result.getTotalElements"+result.getTotalElements());
+        result.getContent().forEach(dto -> log.info("dto :  " + dto));
+    }
+
+
 }
+
+
