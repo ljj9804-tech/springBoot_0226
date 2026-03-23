@@ -39,6 +39,7 @@ public class CustomRestAdvice {
     public ResponseEntity<Map<String, String>> handleNoSuchElementException(NoSuchElementException e) {
         log.error("CustomRestAdvice에서, 에러를 일괄 처리중...e : "+ e);
         log.error("데이터를 찾을수 없습니다.  : "+ e.getMessage());
+
         Map<String, String> errorMap = new HashMap<>();
 
         errorMap.put("message", "해당 데이터가 존재하지 않습니다.");

@@ -52,7 +52,11 @@ public class Board extends BaseEntity {
             fetch = FetchType.LAZY, // 현재 테이블 Board 테이블을 조회를 하는데, imageSet BoardImage 필요시, 조회할 때만
             orphanRemoval = true
     )
+    // 테이블 접근해서 조회하겠다. -> 결론, 미리 조회를 안하겠다.
+    //추가
+    // 고악 객체 제거 속성 이용.
     @Builder.Default
+    // 한번에 모아서 실행을 해보자.
     @BatchSize(size = 20)
     private Set<BoardImage> imageSet = new HashSet<>();
 
@@ -76,9 +80,9 @@ public class Board extends BaseEntity {
     // 이미지 삭제하는 메서드
     public void clearImages() {
         imageSet.forEach(boardImage ->
-                // 부모 게시글을 null 변환 시키면, 고아 객체가 되어서, 자동으로 삭제되는 효과를 줄 예정.
-                // 참고로, 추가 옵션 설정이 필요함.
-                boardImage.changeBoard(null));
-        this.imageSet.clear();
+            // 부모 게시글을 null 변환 시키면, 고아 객체가 되어서, 자동으로 삭제되는 효과를 줄 예정.
+            // 참고로, 추가 옵션 설정이 필요함.
+            boardImage.changeBoard(null));
+            this.imageSet.clear();
     }
 }

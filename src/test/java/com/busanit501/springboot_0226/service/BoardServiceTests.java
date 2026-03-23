@@ -156,7 +156,7 @@ public class BoardServiceTests {
                         .build();
 
         PageResponseDTO<BoardListAllDTO> list = boardService.listWithAll(pageRequestDTO);
-        log.info("list: " + list.toString());
+        log.info("testSelectAllBoardWithReplyCountAndImage _ list: " + list.toString());
     }
 
 }

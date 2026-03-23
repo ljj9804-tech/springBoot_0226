@@ -13,7 +13,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("레스트 API 테스트")
-                        .description("Rest 활용해서 구현해보기")
+                        .description("Rest 활용해서 댓글도 구현해보기")
                         .version("1.0.0")
                 );
     }

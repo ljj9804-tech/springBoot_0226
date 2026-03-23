@@ -20,8 +20,6 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     // 게시글 1번을 삭제시, where 조건부 해당 댓글 3개 삭제.
     void deleteByBoard_Bno(Long bno);
 
-
-    //보드의 bno로 댓글 조회하는 기능 추가
-    List<Reply> findByBoardBno(Long bno);
-
+    // 게시글의 bno로 댓글을 조회하는 기능
+    List<Reply> findByBoard_Bno(Long bno);
 }

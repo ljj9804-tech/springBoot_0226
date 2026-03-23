@@ -18,10 +18,8 @@ public interface BoardService {
     // 전체 목록 +  댓글 갯수 포함
     PageResponseDTO<BoardListReplyCountDTO> listWithReplyCount(PageRequestDTO pageRequestDTO);
 
-    // 전체 목록 +  댓글 갯수 포함 + 전체 이미지도 포함
-    PageResponseDTO<BoardListAllDTO> listWithAll (PageRequestDTO pageRequestDTO);
-
-
+    // 전체 목록 +  댓글 갯수 포함 + 첨부이미지도 포함
+    PageResponseDTO<BoardListAllDTO> listWithAll(PageRequestDTO pageRequestDTO);
 
     // dto -> entity 로 자주 변경하니, 기본 메스드로 추가.
     // 화면 (DTO)-> 디비(엔티티),
@@ -70,5 +68,4 @@ public interface BoardService {
         boardDTO.setFileNames(fileNames);
         return boardDTO;
     }
-
 }

@@ -59,12 +59,13 @@ dependencies {
     // 버전이 명시 되지 않는다면, 최신 버전으로 3.4.0
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
+    // 3
 //순서2 queryDsl
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
 
     // 4
-// 모델 맵퍼, DTO <-> VO 변환 해주는 도구.
-// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+    // 모델 맵퍼, DTO <-> VO 변환 해주는 도구.
+    // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.2.4'
 
     // 5
@@ -78,7 +79,14 @@ dependencies {
     //7
     // 원본 이미지 -> 작은 이미지 변환 도구,
     // https://mvnrepository.com/artifact/net.coobird/thumbnailator
+//    implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.20'
+    // Source: https://mvnrepository.com/artifact/net.coobird/thumbnailator
     implementation group: 'net.coobird', name: 'thumbnailator', version: '0.4.21'
+
+    // 8
+// 스프링 시큐리티, 버전.
+// Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
+    implementation("org.springframework.boot:spring-boot-starter-security:3.5.11")
 
 //    순서3 queryDsl
     annotationProcessor(

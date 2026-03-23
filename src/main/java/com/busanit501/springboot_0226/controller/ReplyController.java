@@ -71,7 +71,8 @@ public class ReplyController {
     }
 
     @Tag(name = "게시글에 대한 댓글 목록 조회 get 방식",
-            description = "게시글 번호 bno 가 필요함. 화면에서 데이터를 보내줘야 합니다. 댓글 목록 조회 진행함, get 형식으로")
+            description = "게시글 번호 bno 가 필요함. 화면에서 데이터를 보내줘야 합니다. " +
+                    "댓글 목록 조회 진행함, get 형식으로")
     @GetMapping(value = "/list/{bno}")
     public PageResponseDTO<ReplyDTO> getList(
             @PathVariable("bno") Long bno,
@@ -117,6 +118,7 @@ public class ReplyController {
     ) throws BindException {
         log.info(" ReplyController 댓글 수정 작업 , replyDTO: " + replyDTO);
         log.info(" ReplyController 댓글 수정 작업2 , 수정할 댓글 번혼 rno : " + rno);
+
         replyService.modify(replyDTO);
         Map<String,Long> resultMap = new HashMap<>();
         resultMap.put("rno",rno);

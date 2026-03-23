@@ -1,6 +1,5 @@
 package com.busanit501.springboot_0226.service;
 
-
 import com.busanit501.springboot_0226.domain.Board;
 import com.busanit501.springboot_0226.domain.Reply;
 import com.busanit501.springboot_0226.dto.*;
@@ -27,6 +26,7 @@ public class BoardServiceImpl implements BoardService{
 
     private final ModelMapper modelMapper; // DTO -> Entity 객체 변환
     private final BoardRepository boardRepository; // 실제 DB에 일을 시키는 기능.
+    // 댓글 기능 추가,
     private final ReplyRepository replyRepository;
 
     @Override
@@ -71,17 +71,21 @@ public class BoardServiceImpl implements BoardService{
                 board.addImage(arr[0], arr[1]);
             }
         }
+
         boardRepository.save(board);
     }
 
     @Override
     public void remove(Long bno) {
-        List<Reply> result = replyRepository.findByBoardBno(bno);
-        boolean checkRelyList = result.isEmpty() ? false : true;
-
-        if(checkRelyList) {
+        // 게시글을 삭제하면, 댓글은
+        // 댓글의 존재 여부를 확인 후, 있으면 삭제하기.
+        List<Reply> result = replyRepository.findByBoard_Bno(bno);
+        boolean checkReplyList = result.isEmpty() ? false : true;
+        if(checkReplyList) {
             replyRepository.deleteByBoard_Bno(bno);
         }
+        // 게시글만 삭제, 참고로, 연관관계로, 게시글이 삭제가 되면,
+        // 자동으로, 첨부 이미지는 삭제가됨.
         boardRepository.deleteById(bno);
     }
 

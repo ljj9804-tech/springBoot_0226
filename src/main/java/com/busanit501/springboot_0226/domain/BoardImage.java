@@ -19,6 +19,7 @@ public class BoardImage implements Comparable<BoardImage>{
 
     private String fileName;
 
+    // 게시글 하나에 여러 첨부이미지가 있을 경우, 순서를 정하는 번호
     private int ord;
 
     // 연관관계 설정 1번,
@@ -27,6 +28,8 @@ public class BoardImage implements Comparable<BoardImage>{
 
     @Override
     public int compareTo(BoardImage other) {
+        // 결과가 음수 : 앞으로 배치.
+        // 결과가 양수 : 뒤로 배치,
         return this.ord - other.ord;
     }
 

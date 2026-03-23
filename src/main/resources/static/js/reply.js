@@ -4,7 +4,7 @@ async function get1(bno) {
     const result = await axios.get(`/replies/list/${bno}`)
     // 데이터를 받아오는지 여부를 확인.
     // console.log(result)
-    return result.data
+     return result.data
 }
 
 // 비동기 통신으로 댓글의 목록 내용을 받아오는 함수
@@ -39,7 +39,7 @@ async function getList({bno,page,size,goLast}) {
 //     )
 // }
 
-// 수정,
+// 댓글 목록 그리기 함수 수정,
 async function getList({bno, page, size, goLast}){
     // 서버로부터 응답 받은 , 댓글의 목록입니다. (bno 부모 게시글에 따른 댓글 목록)
     const result = await axios.get(`/replies/list/${bno}`, {params: {page,size}})
@@ -78,7 +78,7 @@ async function modifyReply(replyObj) {
 }
 
 // 댓글 삭제 함수
-async function removeReply(rno){
+async function removeReply(rno) {
     const response = await axios.delete(`/replies/${rno}`)
     return response.data
 }

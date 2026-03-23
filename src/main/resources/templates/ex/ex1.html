@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!--/* 타임리프 태그 */-->
 <html lang="ko" xmlns:th="www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -14,12 +13,10 @@
 <h3>인라인 방식 h3 태그 내부에 </h3>
 <h3 th:text="${strList}"></h3>
 
-<h1>타임리프 변수 선언하기</h1>
+<h3>타임리프 변수 선언해서 사용하기. </h3>
 <div th:with="num1 = ${10}, num2 = ${20}">
     <h4 th:text="${num1 + num2}"></h4>
 </div>
-
-<h1>반복문, 제어문 처리</h1>
 
 <h3>타임리프의 반복문 2가지 방법 확인. 1 </h3>
 <ul>
@@ -33,7 +30,7 @@
     </th:block>
 </ul>
 
-<h3>타임리프의 반복문에 status 변수 이용해보기</h3>
+<h3>반복문에 status 변수 를 이용해보기.</h3>
 <ul>
     <li th:each="str,status : ${strList}" >
     status 의 index 속성 : [[${status.index}]] --
@@ -43,7 +40,8 @@
     </li>
 </ul>
 
-<h3>조건문, th:if / th:unless / th:switch</h3>
+<h3>조건문,
+    th:if / th:unless / th:switch</h3>
 <ul>
     <li th:each="str,status : ${strList}" >
         <span th:if="${status.odd}">ODD 속성 참 인경우 : 홀수 : [[${str}]]</span>
@@ -51,14 +49,14 @@
     </li>
 </ul>
 
-<h4>삼항 연산자 사용</h4>
+<h3>7번과 같은 형식인데, 삼항 연산자를 이용해서 표현 해보기.,</h3>
 <ul>
     <li th:each="str,status : ${strList}" >
         <span th:text="${status.odd} ? '홀수--'+${str} : '짝수--'+${str}"></span>
     </li>
 </ul>
 
-<h4>switch 이용해보기</h4>
+<h3>th:switch 이용해보기.</h3>
 <ul>
     <li th:each="str,status : ${strList}" >
         <th:block th:switch="${status.index % 3}">
@@ -69,13 +67,14 @@
     </li>
 </ul>
 
-<h3>링크 이동하기</h3>
-<p><a th:href="@{/hello}">/hello 이동하기. </a></p>
-<p><a th:href="@{/hello(name='aaa', age=20)}">/hello 이동하기. </a></p>
+<h3>타임리프로 링크 이동해보기.예시 </h3>
+<a th:href="@{/hello}">/hello 이동하기. </a>
 
+<h3>링크 이동시, 쿼리 스트링 처리,
+    예시</h3>
+<a th:href="@{/hello(name='aaa', age=20)}">/hello 이동하기. </a>
 
 <h3>링크 이동시, 쿼리 스트링 처리, 배열 형식으로 처리,</h3>
 <a th:href="@{/hello(types=${ {'11','22','33'} }, age=20)}">/hello 이동하기. </a>
-
 </body>
 </html>

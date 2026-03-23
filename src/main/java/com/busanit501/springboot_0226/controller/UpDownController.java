@@ -105,7 +105,6 @@ public class UpDownController {
         return null;
     }
 
-
     // 이미지 조회하는 라우팅 만들기.
     @Tag(name = "이미지 파일 조회 테스트",
             description = "get 방식으로 이미지 확인하기. ")
@@ -115,6 +114,7 @@ public class UpDownController {
         // 예시
         // fileName : s_5b418a60-407e-406e-991e-db88d35ea426_크롬기준-로컬스토리지 저장소 확인 방법.PNG
         // 넘겨 받은 파일이름을 이용해서, 실제로 데이터에 접근해서, , http 데이터에 body 내용을 담아서 전달하기.
+
         // 실제 이미지 파일이 위치해 있는 폴더 하위의 파일을 정확히 가리킴.
         Resource resource = new FileSystemResource(uploadPath + File.separator + fileName);
 
@@ -136,14 +136,13 @@ public class UpDownController {
             return ResponseEntity.internalServerError().build();
         }
         return ResponseEntity.ok().headers(headers).body(resource);
-
     }
 
-
+    // 첨부 파일 삭제
     @Tag(name = "이미지 파일 삭제 테스트",
             description = "DELETE 방식으로 이미지 삭제 확인하기. ")
     @DeleteMapping(value = "/remove/{fileName}")
-    //Resource 시, 패키지명 : import org.springframework.core.io.Resource;
+//Resource 시, 패키지명 : import org.springframework.core.io.Resource;
     public Map<String, Boolean> removeFile(@PathVariable String fileName) {
 
         // 예시

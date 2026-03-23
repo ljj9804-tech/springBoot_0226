@@ -31,9 +31,7 @@ public class BoardDTO {
     private LocalDateTime regDate;
     private LocalDateTime modDate;
 
-    //첨부 파일 준비
+    // 첨부 파일들을 담을 준비,
     private List<String> fileNames;
-
-
 
 }
