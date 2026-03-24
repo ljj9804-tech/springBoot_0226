@@ -5,8 +5,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @Log4j2
 @RequiredArgsConstructor
+// 시큐리티 설정 on 추가
+@EnableWebSecurity
+// 권한별 설정 추가
+@EnableMethodSecurity()
 public class CustomSecurityConfig {
 
     // 순서1
@@ -25,13 +30,24 @@ public class CustomSecurityConfig {
 
         log.info("CustomSecurityConfig : SecurityFilterChain, 스프링 시작시, 검사를 한다. ");
 
+        // 순서1
         // 폼 방식으로 로그인 하겠다.
         http.formLogin(
-//                formLogin ->
-//                        formLogin.loginPage("/member/login")
+                formLogin ->
+                        formLogin.loginPage("/member/login")
                 // 기본 페이지로 설정.
-                Customizer.withDefaults()
+//                Customizer.withDefaults()
         );
+
+        // 순서2
+        http.csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable());
+
+        // 순서3,
+        //로그인 후, 성공시 리다이렉트 될 페이지 지정, 간단한 버전.
+        http.formLogin(formLogin ->
+                formLogin.defaultSuccessUrl("/board/list",true)
+        );
+
         return http.build();
     }
 
@@ -53,4 +69,3 @@ public class CustomSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-

@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     // 주입
     private PasswordEncoder passwordEncoder;
 
-        public CustomUserDetailsService() {
+    public CustomUserDetailsService() {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -32,9 +32,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 비교후, 로그인 (회원가입 등. 작업을 진행함.)
 
         // 더미 유저를 생성해서, 확인용.
-        UserDetails userDetails = User.builder().username("lsy3709")
+        UserDetails userDetails = User.builder().username("ljj9804")
                 // 평문으로 패스워드를 지정했는데,
-                //.password("1234")
+//                .password("1234")
                 // 패스워드 암호화
                 .password(passwordEncoder.encode("1234"))
                 // 이유저의 권한, 인가 설정, 로그인한 유저,
